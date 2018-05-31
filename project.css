@@ -1,0 +1,423 @@
+	body {
+        margin: 0;
+        padding: 0;
+    }
+	
+	#map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+	  
+	#menu {
+        position: absolute;
+		left: 35%;
+        background: #fff;
+        padding: 10px;
+        font-family: 'Open Sans', sans-serif;
+    }
+	
+	p {
+	
+	    text-align: left;
+		font-style: italic;
+	
+	}
+	
+	.mp {
+	
+	    text-align: center;
+		font-style: italic;
+	
+	}
+	.mapboxgl-popup-content {
+		color: #595959;
+		background-color: #ffffff; 
+		/*opacity: 0.85; */
+	}
+	
+	.mapboxgl-popup-content b {
+		float: right;
+	}
+	
+	
+	#legend_temp {
+	
+	    margin-top: 0px;
+		width: 170px;
+		background-color: #ffffff;
+		position: absolute;
+	
+	}
+	
+	#legend_turb {
+	
+	    margin-top: 165px;
+		width: 170px;
+		background-color: #ffffff;
+		position: absolute;
+	
+	}
+	
+	#legend_ph {
+	
+	    margin-top: 330px;
+		width: 170px;
+		background-color: #ffffff;
+		position: absolute;
+	
+	}
+	
+	#legend_oxy {
+	
+	    margin-top: 476px;
+		width: 170px;
+		background-color: #ffffff;
+		position: absolute;
+	
+	}
+	
+	.title {
+	    font-weight: bold;
+        font-size: 15px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;		
+	
+	}
+	
+			
+	.temp_color1 {
+	    color: #ffffff;
+		background-color: #b30000;
+		text-align: center;
+	
+	}
+	
+	.temp_color2 {
+	    color: #ffffff;
+		background-color: #ff4000;
+		text-align: center;
+	
+	}
+	
+	.temp_color3 {
+	    color: #ffffff;
+		background-color: #ff8000;
+		text-align: center;
+	
+	}
+	
+	.temp_color4 {
+	    color: #ffffff;
+		background-color: #ffbf00;
+		text-align: center;
+	
+	}
+	
+	.temp_color5 {
+	    color: #ffffff;
+		background-color: #ffdb4d;
+		text-align: center;
+	
+	}
+	
+	.temp_color6 {
+	    color: #ffffff;
+		background-color: #ff0000;
+		text-align: center;
+	
+	}
+	
+	
+	.turb_color1 {
+	    color: #ffffff;
+		background-color: #e6ccb3;
+		text-align: center;
+	
+	}
+	
+	.turb_color2 {
+	    color: #ffffff;
+		background-color: #d2a679;
+		text-align: center;
+	
+	}
+	
+	.turb_color3 {
+	    color: #ffffff;
+		background-color: #bf8040;
+		text-align: center;
+	
+	}
+	
+	.turb_color4 {
+	    color: #ffffff;
+		background-color: #86592d;
+		text-align: center;
+	
+	}
+	
+	.turb_color5 {
+	    color: #ffffff;
+		background-color: #604020;
+		text-align: center;
+	
+	}
+	
+	.turb_color6 {
+	    color: #ffffff;
+		background-color: #000000;
+		text-align: center;
+	
+	}
+	
+	
+	.ph_color1 {
+	    color: #ffffff;
+		background-color: #b3b3b3;
+		text-align: center;
+	
+	}
+	
+	.ph_color2 {
+	    color: #ffffff;
+		background-color: #8c8c8c;
+		text-align: center;
+	
+	}
+	
+	.ph_color3 {
+	    color: #ffffff;
+		background-color: #595959;
+		text-align: center;
+	
+	}
+	
+	.ph_color4 {
+	    color: #ffffff;
+		background-color: #333333;
+		text-align: center;
+	
+	}
+	
+	.ph_color5 {
+	    color: #ffffff;
+		background-color: #000000;
+		text-align: center;
+	
+	}
+	
+	
+	.oxy_color1 {
+	    color: #ffffff;
+		background-color: #000000;
+		text-align: center;
+	
+	}
+	
+	.oxy_color2 {
+	    color: #ffffff;
+		background-color: #00264d;
+		text-align: center;
+	
+	}
+	
+	.oxy_color3 {
+	    color: #ffffff;
+		background-color: #003366;
+		text-align: center;
+	
+	}
+	
+	.oxy_color4 {
+	    color: #ffffff;
+		background-color: #004d99;
+		text-align: center;
+	
+	}
+	
+	.oxy_color5 {
+	    color: #ffffff;
+		background-color: #0066cc;
+		text-align: center;
+	
+	}
+	
+	.oxy_color6 {
+	    color: #ffffff;
+		background-color: #1a8cff;
+		text-align: center;
+	
+	}
+	
+	.oxy_color7 {
+	    color: #ffffff;
+		background-color: #3399ff;
+		text-align: center;
+	
+	}
+	
+	.oxy_color8 {
+	    color: #ffffff;
+		background-color: #66b3ff;
+		text-align: center;
+	
+	}
+	
+	.oxy_color9 {
+	    color: #ffffff;
+		background-color: #b3d9ff;
+		text-align: center;
+	
+	}
+	
+	.oxy_color10 {
+	    color: #ffffff;
+		background-color: #cce6ff;
+		text-align: center;
+	
+	}
+	
+	.slidecontainer {
+		width: 100%;
+		padding-top: 20px;
+		padding-bottom: 0px;
+	}
+	
+	.slider { 
+		-webkit-appearance: none;
+		appearance: none;
+		bottom: 0px;
+		align: center;
+		width: 100%; /* Full-width */
+		height: 15px; /* Specified height */
+		border-radius: 5px;
+		background: #d3d3d3; /* Grey background */
+		outline: none; /* Remove outline */
+		opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+		-webkit-transition: .2s; /* 0.2 seconds transition on hover */
+		transition: opacity .2s;
+	}
+	
+	.slider:hover {
+		opacity: 1;
+	}
+	
+	.slider::-webkit-slider-thumb {
+		-webkit-appearance: none; /* Override default look */
+		appearance: none;
+		width: 25px; /* Set a specific slider handle width */
+		height: 25px; /* Slider handle height */
+		border-radius: 5px;
+		background: #000000; /* white background */
+		cursor: pointer; /* Cursor on hover */
+	}
+
+	.slider::-moz-range-thumb {
+		width: 25px; /* Set a specific slider handle width */
+		height: 25px; /* Slider handle height */
+		border-radius: 5px;
+		background: #000000; /* white background */
+		cursor: pointer; /* Cursor on hover */
+	}
+	
+	.slidecontainer_1 {
+		width: 100%;
+		padding-top: 20px;
+		padding-bottom: 0px;
+	}
+	
+	.slider_time { 
+		-webkit-appearance: none;
+		appearance: none;
+		bottom: 0px;
+		align: center;
+		width: 100%; /* Full-width */
+		height: 15px; /* Specified height */
+		border-radius: 5px;
+		background: #d3d3d3; /* Grey background */
+		outline: none; /* Remove outline */
+		opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+		-webkit-transition: .2s; /* 0.2 seconds transition on hover */
+		transition: opacity .2s;
+	}
+	
+	.slider_time:hover {
+		opacity: 1;
+	}
+	
+	.slider_time::-webkit-slider-thumb {
+		-webkit-appearance: none; /* Override default look */
+		appearance: none;
+		width: 25px; /* Set a specific slider handle width */
+		height: 25px; /* Slider handle height */
+		border-radius: 5px;
+		background: #000000; /* white background */
+		cursor: pointer; /* Cursor on hover */
+	}
+
+	.slider_time::-moz-range-thumb {
+		width: 25px; /* Set a specific slider handle width */
+		height: 25px; /* Slider handle height */
+		border-radius: 5px;
+		background: #000000; /* white background */
+		cursor: pointer; /* Cursor on hover */
+	}
+	
+	#right {
+		
+		float: right;
+		width: 40%;
+		
+	}
+	
+	#left {
+		
+		float: left;
+		width: 40%;
+		
+	}
+	
+	.sensor_title {
+	    font-weight: bold;
+        font-size: 18px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;		
+	
+	}
+	
+	p1 {
+		padding-left: 10px;
+	    text-align: left;
+		font-style: italic;
+		font-size: 15px;
+		text-decoration: underline;
+	}
+	
+	h3 {
+		text-align: center;
+		
+	}
+	
+	/* BE SURE TO CHANGE THE COLUMN COUNT TO 2 IF MORE THAN 6 SENSORS ARE BEING USED. KEEP AT 1 IF LESS.
+	   USE THE WIDTH OF 410px FOR 1 COLUMN AND MARGIN-RIGHT SHOULD BE 10px
+	   THE WIDTHS WILL BE THE SAME REGARDLESS OF HOW MANY COLUMNS THERE ARE*/
+	.row {
+		height: 400px;
+		width: 410px;
+		background-color: #d9d9d9;
+		position: relative;
+		float: right;	
+		border: 2px solid #000000;
+		margin-right: 10px;
+		-webkit-column-count: 2; /* Chrome, Safari, Opera */
+		-moz-column-count: 2; /* Firefox */
+		column-count: 2;
+		-webkit-column-rule: 2px double #000000; /* Chrome, Safari, Opera */
+		-moz-column-rule: 2px double #000000; /* Firefox */
+		column-rule: 2px double #000000;
+		
+	}
