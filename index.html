@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title>Lake Dardanelle Sensors</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+	<script type = "text/javascript" src ="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+	</script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+    <link href="project.css" rel="stylesheet" type="text/css">
+	
+	<div id='map'></div>
+	
+	<script type = "text/javascript" language = "javascript">
+	jQuery.ajaxSetup({async:false});
+
+	mapboxgl.accessToken = 'pk.eyJ1IjoianF1YWxsczMiLCJhIjoiY2pnenRrYWVqMGpndzJ3bzFmd2hzZGNyZyJ9.B0LFoO3LqFWv9rD3I-_ppA';
+	var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/basic-v9',
+   // style: 'mapbox://styles/jqualls3/cjh0wnqlt00q72sk5t9kxu89k',
+    center: [-93.307839, 35.332034],
+    zoom: 10,
+	});
+
+	//hardcoded variables//////////////////////////////////////////////////////////////////////
+	var lat_1=0;//-93.40542679631079;
+	var lon_1=0;//35.35195422419927;
+	var lat_2=0;//-93.34542679631079;
+	var lon_2=0;//35.34195422419927;
+	var lat_3=0;//-93.21731119999999;
+	var lon_3=0;//35.28344816767784;
+
+	var temp1=0;//99;
+	var temp2=0;//66;
+	var temp3=0;//22;
+
+	var turb1=0;//4.7;
+	var turb2=0;//.9;
+	var turb3=0;//7;
+
+	var ph1=0;//9;
+	var ph2=0;//12;
+	var ph3=0;//5;
+
+	var oxy1=0;//70;
+	var oxy2=0;//20;
+	var oxy3=0;//2;
+	
+	
+	//hardcoded variables//////////////////////////////////////////////////////////////////////
+	var time=0;
+	
+	function getData(click){
+			$.post
+			(
+				"/cgi-bin/sensorData.cgi",
+				{
+					data:click
+				},
+				function(feedback)
+				{
+					
+					
+					if(feedback == "false"){
+						alert("Error: Could not get data from database.");
+					}
+					else{
+						//alert(feedback);
+						var data = feedback.split("+");
+						//alert(data[temp2]);
+						time = parseFloat(data[0]);
+						lat_1 = parseFloat(data[1]);
+						lon_1 = parseFloat(data[2]);
+						oxy1 = parseFloat(data[3]);
+						ph1 = parseFloat(data[7]);
+						turb1 = parseFloat(data[11]);
+						temp1 = parseFloat(data[15]);
+						
+						lat_2 = parseFloat(data[33]);
+						lon_2 = parseFloat(data[34]);
+						oxy2 = parseFloat(data[35]);
+						ph2 = parseFloat(data[39]);
+						turb2 = parseFloat(data[43]);
+						temp2 = parseFloat(data[47]);				
+						
+						lat_3 = parseFloat(data[17]);
+						lon_3 = parseFloat(data[18]);
+						oxy3 = parseFloat(data[19]);
+						ph3 = parseFloat(data[23]);
+						turb3 = parseFloat(data[27]);
+						temp3 = parseFloat(data[31]);
+					}
+				}
+			);
+	}
+  
+	$(document).ready(function(){
+	$('input[type=radio]').click(function(){
+		
+		var flag = this.value;
+		//alert(this.value);
+			if(flag=="temp"){
+				display('temp_surround1', 'temp_surround2', 'temp_surround3');	
+				temp();
+			}
+			else if (flag=='turb'){	
+				display('turb_surround1', 'turb_surround2', 'turb_surround3');	
+				turb();
+			}
+			else if (flag=='ph'){
+				display('ph_surround1', 'ph_surround2', 'ph_surround3');	
+				pH();
+			}
+			else if (flag=='oxygen'){
+				display('oxy_surround1', 'oxy_surround2', 'oxy_surround3');	
+				oxy();
+			}
+			else {
+				alert("Error");
+			}
+			
+	});
+	
+	getData(0);
+	var slider = document.getElementById("myRange");
+	var output = document.getElementById("date");
+	output.innerHTML = slider.value;
+	slider.oninput = function(){
+		var msg = this.value;
+		msg=msg*(-1);
+		output.innerHTML = msg;
+		//getData(msg);
+		//displayMarkers(markers);
+	}
+	/*
+	//getData(0);
+	var slider_time = document.getElementById("myRange1");
+	var output_time = document.getElementById("time");
+	output_time.innerHTML = slider_time.value;
+	slider_time.oninput = function(){
+		var msg = this.value;
+		msg=msg*(-1);
+		output_time.innerHTML = msg;
+		//getData(msg);
+		//displayMarkers(markers);
+	}*/
+	
+	//THIS WAS FOR THE SECOND SLIDER 
+	
+		temp();
+		turb();
+		pH();
+		oxy();
+		
+		var ids = ['temp_surround1', 'temp_surround2', 'temp_surround3', 
+						'turb_surround1', 'turb_surround2', 'turb_surround3', 
+						'ph_surround1', 'ph_surround2', 'ph_surround3', 
+						'oxy_surround1', 'oxy_surround2', 'oxy_surround3' ];
+
+			for (var i = 0; i < ids.length; i++) 
+			{
+				var id = ids[i];
+				
+				map.setLayoutProperty(id, 'visibility', 'none');
+			} 
+			
+	document.getElementById("temp_one").innerHTML = temp1;
+	document.getElementById("turb_one").innerHTML = turb1;
+	document.getElementById("ph_one").innerHTML = ph1;
+	document.getElementById("oxy_one").innerHTML = oxy1;
+	
+	document.getElementById("temp_two").innerHTML = temp2;
+	document.getElementById("turb_two").innerHTML = turb2;
+	document.getElementById("ph_two").innerHTML = ph2;
+	document.getElementById("oxy_two").innerHTML = oxy2;
+	
+	document.getElementById("temp_three").innerHTML = temp3;
+	document.getElementById("turb_three").innerHTML = turb3;
+	document.getElementById("ph_three").innerHTML = ph3;
+	document.getElementById("oxy_three").innerHTML = oxy3;
+	
+});
+
+	//calculating surrounding polygon
+
+	function top_lat(a){
+		return a=a+.00525;
+	}
+	function bot_lat(a){
+		return a=a-.00525;
+	}
+
+	function left_lon(a){
+		return a=a-.00385;
+	}
+	function right_lon(a){
+		return a=a+.00385;
+	}
+
+//determining color based on Temperature	
+	function temp_color(a){
+	
+		if(a<=30){
+			return a='#ffdb4d';
+		}
+		else if(a>30 && a<=40){
+			return a='#ffbf00';
+		}
+		else if(a>40 && a<=50) {
+			return a='#ff8000';
+		}
+		else if(a>50 && a<=60) {
+			return a='#ff4000';
+		}
+		else if(a>60 && a<=70) {
+			return a='#ff0000';
+		}
+		else{
+			return a='#b30000';
+		}
+	}	
+	
+
+//determining color based on Turbidity
+	function turb_color(a){
+	
+		if(a<=5.0){
+			return a='#e6ccb3';
+		}
+		else if(a>5.0 && a<=15.0){
+			return a='#d2a679';
+		}
+		else if(a>15.0 && a<=25.0) {
+			return a='#bf8040';
+		}
+		else if(a>25.0 && a<=35.0) {
+			return a='#86592d';
+		}
+		else if(a>35.0 && a<=45.0) {
+			return a='#392613';
+		}
+		else {
+			return a='#000000';
+		}
+	}
+
+//determining color based on pH
+
+	function ph_color(a){
+	
+		if(a<=2){
+			return a='#b3b3b3';
+		}
+		else if(a>2 && a<=5){
+			return a='#8c8c8c';
+		}
+		else if(a>5 && a<=8) {
+			return a='#595959';
+		}
+		else if(a>8 && a<=11) {
+			return a='#333333';
+		}
+		else{
+			return a='#000000';
+		}
+	}
+
+
+//determining color based on Dissolved Oxygen
+
+
+	function oxy_color(a){
+	
+		if(a<=10){
+			return a='#000000';
+		}
+		else if(a>10 && a<=20){
+			return a='#00264d';
+		}
+		else if(a>20 && a<=30) {
+			return a='#003366';
+		}
+		else if(a>30 && a<=40) {
+			return a='#004d99';
+		}
+		else if(a>40 && a<=50) {
+			return a='#0066cc';
+		}
+		else if(a>50 && a<=60) {
+			return a='#1a8cff';
+		}
+		else if(a>60 && a<=70) {
+			return a='#3399ff';
+		}
+		else if(a>70 && a<=80) {
+			return a='#66b3ff';
+		}
+		else if(a>80 && a<=90) {
+			return a='#b3d9ff';
+		}
+		else{
+			return a='#e6f2ff';
+		}
+	}
+
+	/*function displayMarkers(markers){
+		if(typeof(id) != "undefined"){
+			var ids = ['temp_surround1', 'temp_surround2', 'temp_surround3', 
+						'turb_surround1', 'turb_surround2', 'turb_surround3', 
+						'ph_surround1', 'ph_surround2', 'ph_surround3', 
+						'oxy_surround1', 'oxy_surround2', 'oxy_surround3', /*'markers' ];
+
+			for (var i = 0; i < ids.length; i++) 
+			{
+				var id = ids[i];
+				
+				map.removeLayer(id);
+			}
+			loadMarkers();
+		}
+		
+	}*/
+	
+	function display(ly1,ly2,ly3)
+	{
+		if
+		(
+			   (typeof(ly1) != "undefined") 
+			&& (typeof(ly2) != "undefined")
+			&& (typeof(ly3) != "undefined")
+		) 
+		{
+			var ids = ['temp_surround1', 'temp_surround2', 'temp_surround3', 
+						'turb_surround1', 'turb_surround2', 'turb_surround3', 
+						'ph_surround1', 'ph_surround2', 'ph_surround3', 
+						'oxy_surround1', 'oxy_surround2', 'oxy_surround3' ];
+
+			for (var i = 0; i < ids.length; i++) 
+			{
+				var id = ids[i];
+				
+				if((id != ly1)&&(id != ly2)&&(id != ly3))
+					map.setLayoutProperty(id, 'visibility', 'none');
+			} 
+
+			 map.setLayoutProperty(ly1, 'visibility', 'visible');
+			 map.setLayoutProperty(ly2, 'visibility', 'visible');
+			 map.setLayoutProperty(ly3, 'visibility', 'visible');
+		}
+	}
+	
+	//TEMPERATURE FUNCTION/////////////////////////////////////////////////////////////////////////
+	
+	function temp(){
+		
+		map.addLayer({
+				'id': 'temp_surround1',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_1), left_lon(lon_1)],[top_lat(lat_1),right_lon(lon_1)],[bot_lat(lat_1),right_lon(lon_1)],[bot_lat(lat_1),left_lon(lon_1)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': temp_color(temp1),
+					'fill-opacity': 1.0
+				}
+		});
+
+		map.addLayer({
+				'id': 'temp_surround2',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_2), left_lon(lon_2)],[top_lat(lat_2),right_lon(lon_2)],[bot_lat(lat_2),right_lon(lon_2)],[bot_lat(lat_2),left_lon(lon_2)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': temp_color(temp2),
+					'fill-opacity': 1.0
+				}
+		});
+
+		map.addLayer({
+				'id': 'temp_surround3',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_3), left_lon(lon_3)],[top_lat(lat_3),right_lon(lon_3)],[bot_lat(lat_3),right_lon(lon_3)],[bot_lat(lat_3),left_lon(lon_3)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': temp_color(temp3),
+					'fill-opacity': 1.0
+				}
+		});
+	}
+
+	//TURBIDITY FUNCTION//////////////////////////////////////////////////////////////////////////////////
+	
+	function turb(){
+		
+		map.addLayer({
+				'id': 'turb_surround1',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_1), left_lon(lon_1)],[top_lat(lat_1),right_lon(lon_1)],[bot_lat(lat_1),right_lon(lon_1)],[bot_lat(lat_1),left_lon(lon_1)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': turb_color(turb1),
+					'fill-opacity': 1.0
+				}
+		});
+
+		map.addLayer({
+				'id': 'turb_surround2',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_2), left_lon(lon_2)],[top_lat(lat_2),right_lon(lon_2)],[bot_lat(lat_2),right_lon(lon_2)],[bot_lat(lat_2),left_lon(lon_2)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': turb_color(turb2),
+					'fill-opacity': 1.0
+				}
+		});
+
+		map.addLayer({
+				'id': 'turb_surround3',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_3), left_lon(lon_3)],[top_lat(lat_3),right_lon(lon_3)],[bot_lat(lat_3),right_lon(lon_3)],[bot_lat(lat_3),left_lon(lon_3)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': turb_color(turb3),
+					'fill-opacity': 1.0
+				}
+		});
+	}
+
+	//pH FUNCTION////////////////////////////////////////////////////////////////////////////////////////
+	
+	function pH(){
+
+		map.addLayer({
+			'id': 'ph_surround1',
+			'type': 'fill',
+			'source': {
+				'type': 'geojson',
+				'data': {
+					'type': 'Feature',
+					'geometry': {
+						'type': 'Polygon',
+						'coordinates': [[[top_lat(lat_1), left_lon(lon_1)],[top_lat(lat_1),right_lon(lon_1)],[bot_lat(lat_1),right_lon(lon_1)],[bot_lat(lat_1),left_lon(lon_1)]]]
+							
+					}
+				}
+			},
+			'layout': {'visibility': 'visible'},
+			'paint': {
+				'fill-color': ph_color(ph1),
+				'fill-opacity': 1.0
+			}
+		});
+
+		map.addLayer({
+				'id': 'ph_surround2',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_2), left_lon(lon_2)],[top_lat(lat_2),right_lon(lon_2)],[bot_lat(lat_2),right_lon(lon_2)],[bot_lat(lat_2),left_lon(lon_2)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': ph_color(ph2),
+					'fill-opacity': 1.0
+				}
+		});
+
+		map.addLayer({
+				'id': 'ph_surround3',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_3), left_lon(lon_3)],[top_lat(lat_3),right_lon(lon_3)],[bot_lat(lat_3),right_lon(lon_3)],[bot_lat(lat_3),left_lon(lon_3)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': ph_color(ph3),
+					'fill-opacity': 1.0
+				}
+		});
+	}
+	
+
+	//DISSOLVED OXYGEN FUNCTION///////////////////////////////////////////////////////////////////////
+	
+	function oxy(){
+
+		map.addLayer({
+			'id': 'oxy_surround1',
+			'type': 'fill',
+			'source': {
+				'type': 'geojson',
+				'data': {
+					'type': 'Feature',
+					'geometry': {
+						'type': 'Polygon',
+						'coordinates': [[[top_lat(lat_1), left_lon(lon_1)],[top_lat(lat_1),right_lon(lon_1)],[bot_lat(lat_1),right_lon(lon_1)],[bot_lat(lat_1),left_lon(lon_1)]]]
+							
+					}
+				}
+			},
+			'layout': {'visibility': 'visible'},
+			'paint': {
+				'fill-color': oxy_color(oxy1),
+				'fill-opacity': 1.0
+			}
+		});
+
+		map.addLayer({
+				'id': 'oxy_surround2',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_2), left_lon(lon_2)],[top_lat(lat_2),right_lon(lon_2)],[bot_lat(lat_2),right_lon(lon_2)],[bot_lat(lat_2),left_lon(lon_2)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': oxy_color(oxy2),
+					'fill-opacity': 1.0
+				}
+		});
+
+		map.addLayer({
+				'id': 'oxy_surround3',
+				'type': 'fill',
+				'source': {
+					'type': 'geojson',
+					'data': {
+						'type': 'Feature',
+						'geometry': {
+							'type': 'Polygon',
+							'coordinates': [[[top_lat(lat_3), left_lon(lon_3)],[top_lat(lat_3),right_lon(lon_3)],[bot_lat(lat_3),right_lon(lon_3)],[bot_lat(lat_3),left_lon(lon_3)]]]
+								
+						}
+					}
+				},
+				'layout': {'visibility': 'visible'},
+				'paint': {
+					'fill-color': oxy_color(oxy3),
+					'fill-opacity': 1.0
+				}
+		});
+	}
+	
+
+	map.on("load", function () {
+	  
+		map.addLayer({
+			"id": "markers",
+			"type": "symbol",
+			/* Source: A data source specifies the geographic coordinate where the image marker gets placed. */
+			"source": {	
+			  "type": "geojson",
+			  "data": {
+				"type": "FeatureCollection",
+				"features":[{
+					"type":"Feature",
+					"properties": {
+							"description": "<strong>Sensor 1</strong><p>Latitude: &nbsp<b>" + lat_1 + "</b><br>Longitude: &nbsp<b>" + lon_1 + "</b></p>",
+							"icon": "circle"							
+					},
+					"geometry":{
+						"type":"Point",
+						"coordinates":[lat_1, lon_1]
+					}
+				}, {
+					"type":"Feature",
+					"properties": {
+							"description": "<strong>Sensor 2</strong><p>Latitude: &nbsp<b>" + lat_2 + "</b><br>Longitude: &nbsp<b>" + lon_2 + "</b></p>",
+							"icon": "circle"
+					},
+					"geometry":{
+						"type":"Point",
+						"coordinates":[lat_2, lon_2]
+					}
+				}, {
+					"type":"Feature",
+					"properties": {
+							"description": "<strong>Sensor 3</strong><p>Latitude: &nbsp<b>" + lat_3 + "</b><br>Longitude: &nbsp<b>" + lon_3 + "</b></p>",
+							"icon": "circle"
+					},
+					"geometry":{
+						"type":"Point",
+						"coordinates":[lat_3, lon_3]
+						}
+					}]
+				}
+				
+			},
+			"layout": {
+				"icon-image": "{icon}-15",
+				"icon-allow-overlap": true
+			}
+		  });
+		});
+		
+	map.on('click', 'markers', function (e) {
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = e.features[0].properties.description;
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(map);
+    });
+	
+	// Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'markers', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'markers', function () {
+        map.getCanvas().style.cursor = '';
+    });
+
+	function repaintPolygons(){
+		var ids = ['temp_surround1', 'temp_surround2', 'temp_surround3', 
+					'turb_surround1', 'turb_surround2', 'turb_surround3', 
+					'ph_surround1', 'ph_surround2', 'ph_surround3', 
+					'oxy_surround1', 'oxy_surround2', 'oxy_surround3' ];
+
+	
+		map.setPaintProperty('temp_surround1', 'fill-color', temp_color(temp1));
+		map.setPaintProperty('temp_surround2', 'fill-color', temp_color(temp2));
+		map.setPaintProperty('temp_surround3', 'fill-color', temp_color(temp3));
+		
+		map.setPaintProperty('turb_surround1', 'fill-color', turb_color(turb1));
+		map.setPaintProperty('turb_surround2', 'fill-color', turb_color(turb2));
+		map.setPaintProperty('turb_surround3', 'fill-color', turb_color(turb3));
+		
+		map.setPaintProperty('ph_surround1', 'fill-color', ph_color(ph1));
+		map.setPaintProperty('ph_surround2', 'fill-color', ph_color(ph2));
+		map.setPaintProperty('ph_surround3', 'fill-color', ph_color(ph3));
+		
+		map.setPaintProperty('oxy_surround1', 'fill-color', oxy_color(oxy1));
+		map.setPaintProperty('oxy_surround2', 'fill-color', oxy_color(oxy2));
+		map.setPaintProperty('oxy_surround3', 'fill-color', oxy_color(oxy3));
+		 
+	}
+	
+	function slider_1Change(val1) {
+	
+		var val1 = document.getElementById('date').innerHTML;
+		slider_1Change.innerHTML = val1;
+		//alert(val1);
+		getData(val1)
+		repaintPolygons();
+		info();
+	}
+	/*
+	function slider_2Change(val2) {
+	
+		var val2 = document.getElementById('time').innerHTML;
+		slider_2Change.innerHTML = val2;
+		//alert(val2);
+		
+	}*/
+
+	function info(){
+		if(typeof(temp1) != "undefined" || temp1 != "NaN" || temp1 != null){
+			document.getElementById("temp_one").innerHTML = temp1;
+			document.getElementById("turb_one").innerHTML = turb1;
+			document.getElementById("ph_one").innerHTML = ph1;
+			document.getElementById("oxy_one").innerHTML = oxy1;
+			
+			document.getElementById("temp_two").innerHTML = temp2;
+			document.getElementById("turb_two").innerHTML = turb2;
+			document.getElementById("ph_two").innerHTML = ph2;
+			document.getElementById("oxy_two").innerHTML = oxy2;
+			
+			document.getElementById("temp_three").innerHTML = temp3;
+			document.getElementById("turb_three").innerHTML = turb3;
+			document.getElementById("ph_three").innerHTML = ph3;
+			document.getElementById("oxy_three").innerHTML = oxy3;
+		}
+		else{
+			document.getElementById("temp_one").innerHTML = "No Data";
+			document.getElementById("turb_one").innerHTML = "No Data";
+			document.getElementById("ph_one").innerHTML = "No Data";
+			document.getElementById("oxy_one").innerHTML = "No Data";
+			
+			document.getElementById("temp_two").innerHTML = "No Data";
+			document.getElementById("turb_two").innerHTML = "No Data";
+			document.getElementById("ph_two").innerHTML = "No Data";
+			document.getElementById("oxy_two").innerHTML = "No Data";
+			
+			document.getElementById("temp_three").innerHTML = "No Data";
+			document.getElementById("turb_three").innerHTML = "No Data";
+			document.getElementById("ph_three").innerHTML = "No Data";
+			document.getElementById("oxy_three").innerHTML = "No Data";
+		}
+	}
+</script>
+</head>
+	
+<body>
+
+<aside class="first">
+	<div id='legend_temp'>
+		<div class='title'>Temperature (&deg;F)</div>
+		<div class='temp_color5'>0&deg;-30&deg;</div>
+		<div class='temp_color4'>31&deg;-40&deg;</div>
+		<div class='temp_color3'>41&deg;-50&deg;</div>
+		<div class='temp_color2'>51&deg;-60&deg;</div>
+		<div class='temp_color6'>61&deg;-70&deg;</div>
+		<div class='temp_color1'>> 70&deg;</div>
+	</div>
+</aside>
+<aside class="second">
+	<div id='legend_turb'>
+		<div class='title'>Turbidity <br></div>
+		<div class='turb_color1'>0NTU-5NTU</div>
+		<div class='turb_color2'>6NTU-15NTU</div>
+		<div class='turb_color3'>16NTU-25NTU</div>
+		<div class='turb_color4'>26NTU-35NTU</div>
+		<div class='turb_color5'>36NTU-45NTU</div>
+		<div class='turb_color6'>> 45NTU</div>
+	</div>
+</aside>
+<aside class="third">
+	<div id='legend_ph'>
+		<div class='title'>pH Level <br></div>
+		<div class='ph_color1'>0-2</div>
+		<div class='ph_color2'>3-5</div>
+		<div class='ph_color3'>6-8</div>
+		<div class='ph_color4'>9-11</div>
+		<div class='ph_color5'>12-14</div>
+	</div>
+</aside>
+<aside class="fourth">
+	<div id='legend_oxy'>
+		<div class='title'>Dissolved Oxygen<br></div>
+		<div class='oxy_color1'>0-10%</div>
+		<div class='oxy_color2'>11-20%</div>
+		<div class='oxy_color3'>21-30%</div>
+		<div class='oxy_color4'>31-40%</div>
+		<div class='oxy_color5'>41-50%</div>
+		<div class='oxy_color6'>51-60%</div>
+		<div class='oxy_color7'>61-70%</div>
+		<div class='oxy_color8'>71-80%</div>
+		<div class='oxy_color9'>81-90%</div>
+		<div class='oxy_color10'>91-100%</div>
+	</div>
+</aside>
+
+<div id='menu'>
+		<input id='temp' type='radio' name='rtoggle' value='temp'>
+		<label for='temp'>Temperature</label>
+		<input id='turb' type='radio' name='rtoggle' value='turb'>
+		<label for='turb'>Turbidity</label>
+		<input id='ph' type='radio' name='rtoggle' value='ph'>
+		<label for='ph'>Ph Level</label>
+		<input id='oxygen' type='radio' name='rtoggle' value='oxygen'>
+		<label for='oxygen'>Dissolved Oxygen</label>
+		<br>
+		<!-- <aside id="left"> -->
+	<div class="slidecontainer">
+			<input type="range" min="-30" max="0" value="30" class="slider" id="myRange" onchange="slider_1Change(this.value)">
+			<p>Previous Timestamp: <span id="date"></span></p>
+			<p>NaN = No Data available</p>
+	</div>
+		
+		<!-- </aside> -->
+		
+		<!-- <aside id="right"> -->
+		<!-- <div class="slidecontainer_1">
+			<input type="range" min="-24" max="0" value="0" step="0.5" class="slider_time" id="myRange1" onchange="slider_2Change(this.value)">
+			<p class="mp">Previous Time in the Day <br> (30 minute intervals): <br><span id="time"></span> hour(s)</p>
+		</div> -->
+		<!-- </aside> -->
+		
+</div>
+
+	<div class="row">
+				<div class='sensor_title'>Sensor 1</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_one"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_one"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_one"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_one"></span></b> 	
+						
+						<hr>		
+						
+				<div class='sensor_title'>Sensor 2</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_two"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_two"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_two"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_two"></span></b> 
+						
+						<hr>		
+						
+				<div class='sensor_title'>Sensor 3</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_three"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_three"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_three"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_three"></span></b> 
+					
+<!-- MOVE THE BEGINNING COMMENT INDICATOR (<!--) DOWN TO THE BEGINNING OF THE NEXT SENSOR WHEN ADDING ADDITIONAL SENSORS -->
+					
+				<!-- 		<hr>
+						
+				 <div class='sensor_title'>Sensor 4</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_two"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_two"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_two"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_two"></span></b> 
+						
+						<hr>		
+						
+				<div class='sensor_title'>Sensor 5</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_two"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_two"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_two"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_two"></span></b> 	
+						
+				 <div class='sensor_title'>Sensor 6</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_two"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_two"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_two"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_two"></span></b> 
+						
+						<hr>		
+						
+				<div class='sensor_title'>Sensor 7</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_two"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_two"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_two"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_two"></span></b> 
+						
+						<hr>		
+						
+				<div class='sensor_title'>Sensor 8</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_two"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_two"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_two"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_two"></span></b> 
+						
+						<hr>		
+						
+				<div class='sensor_title'>Sensor 9</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_two"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_two"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_two"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_two"></span></b> 
+						
+						<hr>		
+						
+				<div class='sensor_title'>Sensor 10</div> 
+					<p1>Temperature:<b></p1>
+						<span id="temp_two"></span></b></p1> 
+					<p1>Turbidity:<b></p1>
+						<span id="turb_two"></span></b></p1> 
+					<p1>pH:<b></p1>
+						<span id="ph_two"></span></b> 
+					<p1>Diss Oxygen:<b></p1>
+						<span id="oxy_two"></span></b> 
+		 -->
+			</div>
+</body>
+   
+</html>
